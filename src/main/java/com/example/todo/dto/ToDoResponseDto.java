@@ -1,5 +1,6 @@
 package com.example.todo.dto;
 
+import com.example.todo.entity.ToDo;
 import lombok.Getter;
 
 /**
@@ -19,4 +20,10 @@ public class ToDoResponseDto {
     private Long id;
     private String title;
     private String contents;
+
+    public ToDoResponseDto(ToDo todo) { // 매개변수로 Todo 객체를 그대로 받음
+        id = todo.getId();
+        title = todo.getTitle();
+        contents = todo.getContents();
+    }
 }
