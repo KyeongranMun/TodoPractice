@@ -8,9 +8,9 @@ import lombok.Getter;
  * 이 클래스는 데이터베이스의 ToDo 테이블과 매핑되며 일정 데이터를 표현한다.
  *
  * <p>
- *     - id : 일정의 고유 식별자
- *     - title : 일정의 제목
- *     - contentes : 일정의 내용
+ * - id : 일정의 고유 식별자
+ * - title : 일정의 제목
+ * - contents : 일정의 내용
  * </p>
  *
  * Lombok 애너테이션
