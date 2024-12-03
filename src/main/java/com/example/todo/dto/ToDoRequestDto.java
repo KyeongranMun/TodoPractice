@@ -18,7 +18,6 @@ import lombok.Getter;
 
 @Getter
 public class ToDoRequestDto {
-    private Long id;
     private String title;
     private String contents;
 }
