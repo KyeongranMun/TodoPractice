@@ -3,6 +3,9 @@ package com.example.todo.controller;
 import com.example.todo.dto.ToDoRequestDto;
 import com.example.todo.dto.ToDoResponseDto;
 import com.example.todo.entity.ToDo;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -25,7 +28,7 @@ public class ToDoController {
 
     // 일정 생성 기능
     @PostMapping
-    public ToDoResponseDto createTodo(@RequestBody ToDoRequestDto requestDto) { //createTodo() : 클라이언트로부터 전달받은 데이터를 기반으로 새 일정을 생성하고 생성된 데이터를 클라이언트에 반환
+    public ResponseEntity<ToDoResponseDto> createTodo(@RequestBody ToDoRequestDto requestDto) { //createTodo() : 클라이언트로부터 전달받은 데이터를 기반으로 새 일정을 생성하고 생성된 데이터를 클라이언트에 반환
         // 중복이 되지 않도록 식별자가 1씩 증가하도록 만든다.
         Long todoId = todoList.isEmpty() ? 1 : Collections.max(todoList.keySet()) + 1;
 
@@ -35,7 +38,7 @@ public class ToDoController {
         // In-memory DB에 Todo 일정 저장 : 실제 데이터베이스를 연결하지 않고 Map 자료구조를 사용함 -> 프로젝트가 실행되었다가 종료될 때 모든 메모리가 삭제됨
         todoList.put(todoId, todo);
 
-        return new ToDoResponseDto(todo); // 매개변수로 받은 todo 객체를 ResponseDto 형태로 반환
+        return new ResponseEntity<>(new ToDoResponseDto(todo), HttpStatus.CREATED); // 매개변수로 받은 todo 객체를 ResponseDto 형태로 반환, ResponseEntity를 이용해 생성에 성공하면 HTTPSTATUS Enum값의 201 상태코드 함께 출력
     }
 
     // 일정 조회 기능
@@ -57,5 +60,11 @@ public class ToDoController {
         todo.update(requestDto);
 
         return new ToDoResponseDto(todo);
+    }
+
+    //일정 삭제 기능
+    @DeleteMapping("/{id}")
+    public void deleteTodo(@PathVariable Long id) {
+        todoList.remove(id);
     }
 }

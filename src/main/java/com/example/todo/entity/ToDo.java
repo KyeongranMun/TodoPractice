@@ -1,7 +1,6 @@
 package com.example.todo.entity;
 
 import com.example.todo.dto.ToDoRequestDto;
-import com.example.todo.dto.ToDoResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
