@@ -45,4 +45,17 @@ public class ToDoController {
 
         return new ToDoResponseDto(toDo);
     }
+
+    //일정 수정 기능
+    @PutMapping("/{id}")
+    public ToDoResponseDto updateTodoById(
+            @PathVariable Long id,
+            @RequestBody ToDoRequestDto requestDto
+    ) {
+        ToDo todo = todoList.get(id);
+
+        todo.update(requestDto);
+
+        return new ToDoResponseDto(todo);
+    }
 }

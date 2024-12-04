@@ -1,5 +1,7 @@
 package com.example.todo.entity;
 
+import com.example.todo.dto.ToDoRequestDto;
+import com.example.todo.dto.ToDoResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -25,4 +27,8 @@ public class ToDo {
     private String title;
     private String contents;
 
+    public void update(ToDoRequestDto requestDto) {
+        title = requestDto.getTitle();
+        contents = requestDto.getContents();
+    }
 }
