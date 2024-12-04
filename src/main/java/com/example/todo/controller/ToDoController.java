@@ -8,9 +8,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 일정 관리 애플리케이션의 ToDoController 클래스
@@ -24,9 +22,9 @@ import java.util.Map;
 @RequestMapping("/todos") // 공통으로 들어가는 /todos url
 public class ToDoController {
     // 자료구조 Map을 임시 데이터베이스로 사용
-    private final Map<Long, ToDo> todoList = new HashMap<>();
+    private final Map<Long, ToDo> todoList = new HashMap<>(); // Map은 인터페이스이기 때문에 구현체인 HashMap<>()을 사용해서 초기화
 
-    // 일정 생성 기능
+    // 일정 생성 기능 - 상태코드 추가로 성공 시 201 OK 상태코드 출력
     @PostMapping
     public ResponseEntity<ToDoResponseDto> createTodo(@RequestBody ToDoRequestDto requestDto) { //createTodo() : 클라이언트로부터 전달받은 데이터를 기반으로 새 일정을 생성하고 생성된 데이터를 클라이언트에 반환
         // 중복이 되지 않도록 식별자가 1씩 증가하도록 만든다.
@@ -47,6 +45,23 @@ public class ToDoController {
        ToDo toDo = todoList.get(id);
 
         return new ToDoResponseDto(toDo);
+    }
+
+    // 일정 목록 조회 기능
+    @GetMapping
+    public ResponseEntity<List<ToDoResponseDto>> findAllTodos() {
+        // 리스트 형태로 데이터를 응답받기 위해 init List (리스트 초기화)
+        List<ToDoResponseDto> responseList = new ArrayList<>(); // List는 인터페이스이기 때문에 구현체를 사용해 초기화 해줘야 한다. (인터페이스는 new 키워드로 인스턴스화 할 수 없다.)
+
+        //Map to List 스트림으로 코드 복잡성 낮추기
+        //responseList =  todoList.values().stream().map(ToDoResponseDto::new).toList(); -> 아직 stream에 익숙치 않으니 나중에 쓰도록 한다.
+        // HashMap<ToDo> -> List<ToDoResponseDto>
+        for (ToDo todo : todoList.values()) {
+            ToDoResponseDto responseDto = new ToDoResponseDto(todo);
+            responseList.add(responseDto);
+        }
+
+        return ResponseEntity.ok(responseList); // ResponseEntity 형태로 반환해야 하므로 responseList를 그대로 ResponseEntity로 감싼다.
     }
 
     //일정 수정 기능
