@@ -91,9 +91,39 @@ public class ToDoController {
         return new ResponseEntity<>(new ToDoResponseDto(todo),HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<ToDoResponseDto> updateTitle(
+            @PathVariable Long id,
+            @RequestBody ToDoRequestDto requestDto
+    ) {
+        ToDo todo = todoList.get(id);
+
+        //NullPointerException 방지
+        if (todo == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        // 필수값 검증 (제목, 내용)
+        if (requestDto.getTitle() == null || requestDto.getContents() != null) { // contents 관련 요청이 있을 경우 400 상태코드 출력
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        todo.updateTitle(requestDto);
+
+        return new ResponseEntity<>(new ToDoResponseDto(todo), HttpStatus.OK);
+    }
+
     //일정 삭제 기능
     @DeleteMapping("/{id}")
-    public void deleteTodo(@PathVariable Long id) {
-        todoList.remove(id);
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
+
+        //todoList의 Key 값에 id를 포함한다면
+        if (todoList.containsKey(id)) {
+            //key가 id 인 value 삭제
+            todoList.remove(id);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        // 포함하고 있지 않은 경우
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
