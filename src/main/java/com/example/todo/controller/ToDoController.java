@@ -4,7 +4,6 @@ import com.example.todo.dto.ToDoRequestDto;
 import com.example.todo.dto.ToDoResponseDto;
 import com.example.todo.entity.ToDo;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,10 +40,15 @@ public class ToDoController {
 
     // 일정 조회 기능
     @GetMapping("/{id}") // prefix 로 todos가 만들어져 있기 때문에 식별자를 입력해준다. 식별자를 파라미터로 바인딩 할 때 Pathvariable을 이용한다.
-    public ToDoResponseDto findTodoById(@PathVariable Long id) {
+    public ResponseEntity<ToDoResponseDto> findTodoById(@PathVariable Long id) {
        ToDo toDo = todoList.get(id);
 
-        return new ToDoResponseDto(toDo);
+       // 사용자가 찾으려는 식별자의 일정이 조회되지 않을 경우 예외처리
+        if (toDo == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new ToDoResponseDto(toDo), HttpStatus.OK);
     }
 
     // 일정 목록 조회 기능
