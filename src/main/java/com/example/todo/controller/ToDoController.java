@@ -17,12 +17,13 @@ import java.util.Map;
  * Map 자료구조를 In-memory 데이터베이스로 사용하여 일정 데이터 저장 ( 임시 활용 )
  */
 
-@RestController
+@RestController // 데이터의 형태를 JSON으로 일일이 바꿔주지 않아도 RestController 에서 자동으로 JSON 형태로 반환해주기 때문에
 @RequestMapping("/todos") // 공통으로 들어가는 /todos url
 public class ToDoController {
     // 자료구조 Map을 임시 데이터베이스로 사용
     private final Map<Long, ToDo> todoList = new HashMap<>();
 
+    // 일정 생성 기능
     @PostMapping
     public ToDoResponseDto createTodo(@RequestBody ToDoRequestDto requestDto) { //createTodo() : 클라이언트로부터 전달받은 데이터를 기반으로 새 일정을 생성하고 생성된 데이터를 클라이언트에 반환
         // 중복이 되지 않도록 식별자가 1씩 증가하도록 만든다.
@@ -35,5 +36,13 @@ public class ToDoController {
         todoList.put(todoId, todo);
 
         return new ToDoResponseDto(todo); // 매개변수로 받은 todo 객체를 ResponseDto 형태로 반환
+    }
+
+    // 일정 조회 기능
+    @GetMapping("/{id}") // prefix 로 todos가 만들어져 있기 때문에 식별자를 입력해준다. 식별자를 파라미터로 바인딩 할 때 Pathvariable을 이용한다.
+    public ToDoResponseDto findTodoById(@PathVariable Long id) {
+       ToDo toDo = todoList.get(id);
+
+        return new ToDoResponseDto(toDo);
     }
 }
