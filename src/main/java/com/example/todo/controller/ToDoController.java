@@ -38,7 +38,7 @@ public class ToDoController {
         return new ResponseEntity<>(new ToDoResponseDto(todo), HttpStatus.CREATED); // 매개변수로 받은 todo 객체를 ResponseDto 형태로 반환, ResponseEntity를 이용해 생성에 성공하면 HTTPSTATUS Enum값의 201 상태코드 함께 출력
     }
 
-    // 일정 조회 기능
+    // 일정 조회 기능 - 상태코드 추가로 성공 시 200 OK 출력, 조회하려는 식별자의 일정이 없을 경우 404 NOT FOUND 출력
     @GetMapping("/{id}") // prefix 로 todos가 만들어져 있기 때문에 식별자를 입력해준다. 식별자를 파라미터로 바인딩 할 때 Pathvariable을 이용한다.
     public ResponseEntity<ToDoResponseDto> findTodoById(@PathVariable Long id) {
        ToDo toDo = todoList.get(id);
@@ -70,15 +70,25 @@ public class ToDoController {
 
     //일정 수정 기능
     @PutMapping("/{id}")
-    public ToDoResponseDto updateTodoById(
+    public ResponseEntity<ToDoResponseDto> updateTodoById(
             @PathVariable Long id,
-            @RequestBody ToDoRequestDto requestDto
-    ) {
+            @RequestBody ToDoRequestDto requestDto)
+    {
         ToDo todo = todoList.get(id);
 
+        // NullPointerException 방지
+        if (todo == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        // 필수값 검증 (제목, 내용)
+        if (requestDto.getTitle() == null || requestDto.getContents() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        //일정 수정
         todo.update(requestDto);
 
-        return new ToDoResponseDto(todo);
+        // 응답
+        return new ResponseEntity<>(new ToDoResponseDto(todo),HttpStatus.OK);
     }
 
     //일정 삭제 기능
